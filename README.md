@@ -1,108 +1,175 @@
 # 🔒 Network Security Scanner
 
-Advanced Network Monitor & Vulnerability Scanner - Desktop Application
+<div align="center">
 
-A professional network security tool for discovering devices, scanning ports, and detecting vulnerabilities on your local network.
+**Advanced Network Monitor & Vulnerability Scanner**
+
+A professional desktop application for discovering network devices, scanning ports, and detecting security vulnerabilities on local networks.
+
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![PySide6](https://img.shields.io/badge/PySide6-6.5+-green.svg)](https://www.qt.io/qt-for-python)
+[![License](https://img.shields.io/badge/License-Educational-yellow.svg)](LICENSE)
+
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Screenshots](#-screenshots)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Project Structure](#-project-structure)
+- [Configuration](#-configuration)
+- [Building Desktop App](#-building-desktop-app)
+- [Contributing](#-contributing)
+- [Author](#-author)
+- [Disclaimer](#-disclaimer)
+
+---
 
 ## ✨ Features
 
-- 🔍 **Auto-detect network subnet** - Automatically detects your network configuration
-- 📡 **Device Discovery** - Discover all devices on your network using ping and ARP
-- 🔒 **Port Scanning** - Fast multi-threaded port scanning
-- 🛡️ **Vulnerability Detection** - Detects known security vulnerabilities
-- 📊 **Security Analysis** - Detailed security recommendations for each vulnerability
-- 💾 **Export Results** - Export scan results to text files
-- 🎨 **Modern Dark UI** - Beautiful dark-themed interface
-- 🖥️ **Desktop App** - Standalone executable for Windows
+- 🔍 **Auto Network Detection** - Automatically detects subnet and default gateway
+- 📡 **Device Discovery** - Discovers all devices using ping sweep and ARP table
+- 🔒 **Port Scanning** - Fast multi-threaded port scanning (up to 50 concurrent threads)
+- 🛡️ **Vulnerability Detection** - Detects known security vulnerabilities with detailed analysis
+- 📊 **Security Analysis** - Provides severity ratings and security recommendations
+- 🎨 **Modern Dark UI** - Beautiful, professional dark-themed interface
+- 💾 **Export Results** - Export scan reports to text files
+- 🖥️ **Standalone Executable** - Build as Windows desktop application (.exe)
 
-## Project Structure
+---
 
-```
-├── main.py              # Main entry point with logo and splash screen
-├── monitor_app.py       # Original main application (can be refactored later)
-├── config.py            # Ports, vulnerabilities, and trusted IPs configuration
-├── network.py           # Network discovery functions
-├── scanner.py           # Port scanning and vulnerability detection
-├── threads.py           # QThread classes for background operations
-└── ui_utils.py          # UI helper functions
-```
+## 📸 Screenshots
 
-## Installation
+<div align="center">
 
-Install required packages:
+![Main Window](screenshots/main-window.png)
+
+*Main application interface showing device discovery and monitoring*
+
+![Scan Results](screenshots/scan-results.png)
+
+*Detailed vulnerability scan results with security recommendations*
+
+</div>
+
+---
+
+## 🚀 Installation
+
+### Requirements
+
+- Python 3.8 or higher
+- Windows 10/11 (Linux support available with minor modifications)
+
+### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Or manually:
+Or install manually:
 
 ```bash
 pip install PySide6 pyinstaller Pillow
 ```
 
-## Usage
+---
+
+## 💻 Usage
 
 ### Run as Python Script
-
-Run the application:
 
 ```bash
 python main.py
 ```
 
-Or run the original version:
+### Quick Start Guide
 
-```bash
-python monitor_app.py
+1. **Discover Devices**
+   - Click "🔍 Detect Network & Discover Devices"
+   - Wait for the scan to complete
+   - View discovered devices in the table
+
+2. **Configure Ports**
+   - Enter ports to scan (e.g., `22,80,443`)
+   - Leave empty for common ports scan
+   - Or type `all` for all common ports
+
+3. **Scan Selected Devices**
+   - Select one or more devices from the table
+   - Click "🎯 Scan Selected"
+   - View detailed vulnerability reports
+
+4. **Scan All Devices**
+   - Click "🚀 Scan ALL Devices"
+   - Comprehensive scan of all discovered devices
+
+5. **Export Results**
+   - Click "💾 Export Results"
+   - Save scan reports to a text file
+
+---
+
+## 📁 Project Structure
+
+```
+network-security-scanner/
+├── main.py                  # Application entry point with logo
+├── monitor_app.py           # Main GUI window and logic
+├── config.py                # Ports, vulnerabilities, and trusted IPs
+├── network.py               # Network discovery functions
+├── scanner.py               # Port scanning and vulnerability detection
+├── threads.py               # Background thread classes
+├── ui_utils.py              # UI helper functions
+├── build_desktop_app.bat    # Build script for Windows executable
+├── create_icon.py           # Icon generator
+├── requirements.txt         # Python dependencies
+└── screenshots/             # Application screenshots
 ```
 
-### Build Desktop Application (.exe)
+---
 
-To create a standalone desktop executable:
+## ⚙️ Configuration
 
-1. **Double-click** `build_desktop_app.bat` 
+Edit `config.py` to customize:
 
-   OR
+### Trusted IPs
+Add your trusted device IPs to the whitelist:
+```python
+TRUSTED_IPS = [
+    "192.168.1.1",   # Router
+    "192.168.1.10",  # Your PC
+]
+```
 
-2. **Run manually:**
-   ```bash
-   build_desktop_app.bat
-   ```
+### Vulnerability Database
+Modify or add new vulnerabilities in the `VULNERABILITIES` dictionary.
 
-This will:
-- Create `icon.ico` for the application
-- Build `NetworkSecurityScanner.exe` in the `dist` folder
-- Create a desktop shortcut
+### Security Advice
+Update port-specific security recommendations in `SECURITY_ADVICE`.
 
-After building, you'll find:
-- **Executable**: `dist\NetworkSecurityScanner.exe`
-- **Desktop Shortcut**: Created automatically on your desktop
+---
 
-You can now run the application directly from the .exe file or the desktop shortcut without needing Python installed!
-
-## Configuration
-
-Edit `config.py` to:
-- Add trusted IPs
-- Modify vulnerability database
-- Update security advice
-
-## 📦 Building Desktop Application
+## 🏗️ Building Desktop App
 
 ### Prerequisites
+
 ```bash
-pip install -r requirements.txt
+pip install pyinstaller Pillow
 ```
 
 ### Build Steps
 
-1. **Create Icon:**
+1. **Create Icon** (optional):
    ```bash
    python create_icon.py
    ```
 
-2. **Build Executable:**
+2. **Build Executable**:
    ```bash
    build_desktop_app.bat
    ```
@@ -112,71 +179,90 @@ pip install -r requirements.txt
    pyinstaller --name="NetworkSecurityScanner" --onefile --windowed --icon=icon.ico main.py
    ```
 
-3. **Result:**
+3. **Result**:
    - Executable: `dist\NetworkSecurityScanner.exe`
-   - Desktop shortcut will be created automatically
+   - Desktop shortcut created automatically
+   - Run without Python installation required
 
-## 🚀 Quick Start
+---
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/network-security-scanner.git
-   cd network-security-scanner
-   ```
+## 🔧 Technical Details
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### Supported Ports
+- Common ports: 21, 22, 23, 25, 53, 80, 110, 139, 143, 443, 445, 3306, 3389
+- Custom ports: Enter any port range or specific ports
 
-3. Run the application:
-   ```bash
-   python main.py
-   ```
+### Vulnerability Severity Levels
+- **Critical** - Immediate action required
+- **High** - Fix as soon as possible
+- **Medium** - Should be addressed
+- **Low** - Consider fixing
 
-## 📝 Configuration
+### Scan Performance
+- Multi-threaded scanning (50 concurrent threads)
+- Fast ping sweep with progress tracking
+- ARP table integration for comprehensive device discovery
 
-Edit `config.py` to customize:
-- **Trusted IPs** - Add your trusted devices
-- **Vulnerability Database** - Modify or add new vulnerabilities
-- **Security Advice** - Update recommendations
-
-## 🛠️ Project Structure
-
-```
-├── main.py                  # Main entry point with logo
-├── monitor_app.py           # Main application window
-├── config.py                # Configuration and data
-├── network.py               # Network discovery functions
-├── scanner.py               # Port scanning and vulnerability detection
-├── threads.py               # Background threads
-├── ui_utils.py              # UI helper functions
-├── build_desktop_app.bat    # Build script for Windows
-├── create_icon.py           # Icon generator
-└── requirements.txt         # Python dependencies
-```
-
-## 📸 Screenshots
-
-*Add screenshots of your application here*
+---
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
 ## 📄 License
 
-This project is created for educational and security research purposes.
+This project is created for **educational and authorized security testing purposes only**.
+
+---
 
 ## 👤 Author
 
 **Mohamed Ahmed**
 
-## ⚠️ Disclaimer
-
-This tool is for authorized security testing and educational purposes only. Only scan networks you own or have explicit permission to test.
+- GitHub: [@Mohmedahmed888](https://github.com/Mohmedahmed888)
 
 ---
 
-⭐ If you find this project useful, please give it a star!
+## ⚠️ Disclaimer
 
+**IMPORTANT**: This tool is intended for:
+
+- ✅ Authorized security testing on networks you own
+- ✅ Educational and research purposes
+- ✅ Personal network security assessment
+
+**DO NOT** use this tool to:
+
+- ❌ Scan networks without authorization
+- ❌ Perform unauthorized security testing
+- ❌ Access systems without permission
+
+**The authors are not responsible for any misuse of this software.**
+
+---
+
+## 📞 Support
+
+If you encounter any issues or have questions:
+
+1. Check existing [Issues](https://github.com/Mohmedahmed888/network-security-scanner/issues)
+2. Create a new issue with detailed information
+3. Include screenshots if applicable
+
+---
+
+<div align="center">
+
+**⭐ If you find this project useful, please give it a star!**
+
+Made with ❤️ by Mohamed Ahmed
+
+</div>
