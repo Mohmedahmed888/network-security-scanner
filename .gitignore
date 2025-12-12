@@ -49,6 +49,9 @@ build/
 dist/
 *.spec
 
+# Linux executables
+NetworkSecurityScanner
+
 # Keep icon.ico but ignore generated files
 # icon.ico
 

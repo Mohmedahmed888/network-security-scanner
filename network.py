@@ -83,16 +83,19 @@ def discover_hosts(subnet_prefix: str) -> List[Dict[str, str]]:
     
     known_ips = {h["ip"] for h in hosts}
     
-    # ARP table
+    # ARP table - Cross-platform
     try:
+        system = platform.system().lower()
         startupinfo = None
         creationflags = 0
-        if platform.system().lower() == "windows":
+        
+        if "windows" in system:
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             startupinfo.wShowWindow = subprocess.SW_HIDE
             creationflags = subprocess.CREATE_NO_WINDOW
         
+        # ARP command works on both Windows and Linux
         result = subprocess.run(
             ["arp", "-a"],
             capture_output=True,
@@ -101,9 +104,11 @@ def discover_hosts(subnet_prefix: str) -> List[Dict[str, str]]:
             errors="ignore",
             startupinfo=startupinfo,
             creationflags=creationflags,
-            shell=False
+            shell=False,
+            timeout=10
         )
         arp_out = result.stdout
+        # Extract IPs - works for both Windows and Linux ARP output
         arp_ips = re.findall(r"(\d+\.\d+\.\d+\.\d+)", arp_out)
         
         for ip in arp_ips:
@@ -130,30 +135,78 @@ def discover_hosts(subnet_prefix: str) -> List[Dict[str, str]]:
 
 
 def get_default_gateway_subnet_prefix() -> Optional[str]:
-    """Get subnet prefix from default gateway"""
+    """Get subnet prefix from default gateway - Cross-platform"""
+    system = platform.system().lower()
+    
     try:
         startupinfo = None
         creationflags = 0
-        if platform.system().lower() == "windows":
+        
+        if "windows" in system:
+            # Windows: use ipconfig
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             startupinfo.wShowWindow = subprocess.SW_HIDE
             creationflags = subprocess.CREATE_NO_WINDOW
+            
+            result = subprocess.run(
+                ["ipconfig"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="ignore",
+                startupinfo=startupinfo,
+                creationflags=creationflags,
+                shell=False
+            )
+            output = result.stdout
+            gateways = re.findall(r"Default Gateway[^\:]*:\s*([\d\.]*)", output)
+            
+        else:
+            # Linux/Mac: use ip route or route -n
+            try:
+                # Try 'ip route' first (modern Linux)
+                result = subprocess.run(
+                    ["ip", "route", "show", "default"],
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="ignore",
+                    timeout=5
+                )
+                if result.returncode == 0:
+                    # Extract gateway from "default via 192.168.1.1 dev eth0"
+                    match = re.search(r"via\s+(\d+\.\d+\.\d+\.\d+)", result.stdout)
+                    if match:
+                        gateways = [match.group(1)]
+                    else:
+                        gateways = []
+                else:
+                    gateways = []
+            except (FileNotFoundError, subprocess.TimeoutExpired):
+                # Fallback to 'route -n' (older Linux/Mac)
+                try:
+                    result = subprocess.run(
+                        ["route", "-n", "get", "default"],
+                        capture_output=True,
+                        text=True,
+                        encoding="utf-8",
+                        errors="ignore",
+                        timeout=5
+                    )
+                    if result.returncode == 0:
+                        # Extract gateway from "gateway: 192.168.1.1"
+                        match = re.search(r"gateway:\s*(\d+\.\d+\.\d+\.\d+)", result.stdout)
+                        if match:
+                            gateways = [match.group(1)]
+                        else:
+                            gateways = []
+                    else:
+                        gateways = []
+                except (FileNotFoundError, subprocess.TimeoutExpired):
+                    gateways = []
         
-        result = subprocess.run(
-            ["ipconfig"],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="ignore",
-            startupinfo=startupinfo,
-            creationflags=creationflags,
-            shell=False
-        )
-        output = result.stdout
-        
-        gateways = re.findall(r"Default Gateway[^\:]*:\s*([\d\.]*)", output)
-        gateways = [g.strip() for g in gateways if g.strip() not in ["", "0.0.0.0"]]
+        gateways = [g.strip() for g in gateways if g.strip() and g.strip() not in ["", "0.0.0.0"]]
         
         if not gateways:
             return None

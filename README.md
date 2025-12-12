@@ -38,7 +38,8 @@ A professional desktop application for discovering network devices, scanning por
 - 📊 **Security Analysis** - Provides severity ratings and security recommendations
 - 🎨 **Modern Dark UI** - Beautiful, professional dark-themed interface
 - 💾 **Export Results** - Export scan reports to text files
-- 🖥️ **Standalone Executable** - Build as Windows desktop application (.exe)
+- 🖥️ **Standalone Executable** - Build as desktop application (.exe for Windows, binary for Linux)
+- 🐧 **Cross-Platform** - Works on Windows and Linux
 
 ---
 
@@ -57,7 +58,8 @@ A professional desktop application for discovering network devices, scanning por
 ### Requirements
 
 - Python 3.8 or higher
-- Windows 10/11 (Linux support available with minor modifications)
+- **Windows 10/11** or **Linux** (Ubuntu, Debian, Fedora, Arch, etc.)
+- Network tools: ping, arp, ip/ipconfig
 
 ### Install Dependencies
 
@@ -77,9 +79,17 @@ pip install PySide6 pyinstaller Pillow
 
 ### Run as Python Script
 
+**Windows:**
 ```bash
 python main.py
 ```
+
+**Linux/Mac:**
+```bash
+python3 main.py
+```
+
+See [README_LINUX.md](README_LINUX.md) for detailed Linux setup instructions.
 
 ### Quick Start Guide
 

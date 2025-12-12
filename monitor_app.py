@@ -511,32 +511,70 @@ def check_vulnerabilities(ip: str, port: int, service: str, banner: str = "") ->
 
 def get_default_gateway_subnet_prefix() -> Optional[str]:
     """
-    يقرأ الـ Default Gateway الحقيقي من ipconfig
-    ويستخرج subnet prefix (مثلاً 192.168.1)
+    Get subnet prefix from default gateway - Cross-platform
+    Windows: ipconfig
+    Linux: ip route or route -n
     """
+    system = platform.system().lower()
+    
     try:
         startupinfo = None
         creationflags = 0
-        if platform.system().lower() == "windows":
+        
+        if "windows" in system:
+            # Windows: use ipconfig
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             startupinfo.wShowWindow = subprocess.SW_HIDE
             creationflags = subprocess.CREATE_NO_WINDOW
-        
-        result = subprocess.run(
-            ["ipconfig"],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="ignore",
-            startupinfo=startupinfo,
-            creationflags=creationflags,
-            shell=False
-        )
-        output = result.stdout
+            
+            result = subprocess.run(
+                ["ipconfig"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="ignore",
+                startupinfo=startupinfo,
+                creationflags=creationflags,
+                shell=False
+            )
+            output = result.stdout
+            gateways = re.findall(r"Default Gateway[^\:]*:\s*([\d\.]*)", output)
+        else:
+            # Linux/Mac: use ip route
+            try:
+                result = subprocess.run(
+                    ["ip", "route", "show", "default"],
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="ignore",
+                    timeout=5
+                )
+                if result.returncode == 0:
+                    match = re.search(r"via\s+(\d+\.\d+\.\d+\.\d+)", result.stdout)
+                    gateways = [match.group(1)] if match else []
+                else:
+                    gateways = []
+            except (FileNotFoundError, subprocess.TimeoutExpired):
+                try:
+                    result = subprocess.run(
+                        ["route", "-n", "get", "default"],
+                        capture_output=True,
+                        text=True,
+                        encoding="utf-8",
+                        errors="ignore",
+                        timeout=5
+                    )
+                    if result.returncode == 0:
+                        match = re.search(r"gateway:\s*(\d+\.\d+\.\d+\.\d+)", result.stdout)
+                        gateways = [match.group(1)] if match else []
+                    else:
+                        gateways = []
+                except (FileNotFoundError, subprocess.TimeoutExpired):
+                    gateways = []
 
-        gateways = re.findall(r"Default Gateway[^\:]*:\s*([\d\.]*)", output)
-        gateways = [g.strip() for g in gateways if g.strip() not in ["", "0.0.0.0"]]
+        gateways = [g.strip() for g in gateways if g.strip() and g.strip() not in ["", "0.0.0.0"]]
 
         if not gateways:
             return None
@@ -642,11 +680,13 @@ class DiscoverThread(QThread):
                 if i % 10 == 0:
                     self.progress.emit(i, total)
             
-            # ARP table
+            # ARP table - Cross-platform
             try:
+                system = platform.system().lower()
                 startupinfo = None
                 creationflags = 0
-                if platform.system().lower() == "windows":
+                
+                if "windows" in system:
                     startupinfo = subprocess.STARTUPINFO()
                     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
                     startupinfo.wShowWindow = subprocess.SW_HIDE
@@ -660,7 +700,8 @@ class DiscoverThread(QThread):
                     errors="ignore",
                     startupinfo=startupinfo,
                     creationflags=creationflags,
-                    shell=False
+                    shell=False,
+                    timeout=10
                 )
                 arp_out = result.stdout
                 arp_ips = re.findall(r"(\d+\.\d+\.\d+\.\d+)", arp_out)

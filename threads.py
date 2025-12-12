@@ -46,15 +46,17 @@ class DiscoverThread(QThread):
                 if i % 10 == 0:
                     self.progress.emit(i, total)
             
-            # ARP table
+            # ARP table - Cross-platform
             try:
                 import subprocess
                 import re
                 import platform
                 
+                system = platform.system().lower()
                 startupinfo = None
                 creationflags = 0
-                if platform.system().lower() == "windows":
+                
+                if "windows" in system:
                     startupinfo = subprocess.STARTUPINFO()
                     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
                     startupinfo.wShowWindow = subprocess.SW_HIDE
@@ -68,7 +70,8 @@ class DiscoverThread(QThread):
                     errors="ignore",
                     startupinfo=startupinfo,
                     creationflags=creationflags,
-                    shell=False
+                    shell=False,
+                    timeout=10
                 )
                 arp_out = result.stdout
                 arp_ips = re.findall(r"(\d+\.\d+\.\d+\.\d+)", arp_out)
