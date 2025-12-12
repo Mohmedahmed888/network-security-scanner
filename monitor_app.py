@@ -9,7 +9,7 @@ Features:
 - Let the user choose which devices to scan, and which ports to scan.
 - Show scan results and security advice in a detail box.
 
-By: Malik's Cybersecurity Project :)
+By: Mohamed Ahmed
 """
 
 from __future__ import annotations
@@ -817,7 +817,7 @@ class ScanThread(QThread):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Advanced Network Monitor & Tracking App (PySide6) — Malik")
+        self.setWindowTitle("Advanced Network Monitor & Tracking App (PySide6) — Mohamed Ahmed")
         self.resize(1200, 800)
         self.setMinimumSize(1000, 600)
 

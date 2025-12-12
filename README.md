@@ -170,7 +170,7 @@ This project is created for educational and security research purposes.
 
 ## 👤 Author
 
-**Malik's Cybersecurity Project**
+**Mohamed Ahmed**
 
 ## ⚠️ Disclaimer
 

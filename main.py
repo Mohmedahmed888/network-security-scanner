@@ -69,7 +69,7 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName("Network Security Scanner")
     app.setApplicationVersion("1.0.0")
-    app.setOrganizationName("Malik's Cybersecurity")
+    app.setOrganizationName("Mohamed Ahmed")
     
     # Create and show splash screen
     splash_pixmap = create_splash_screen()
