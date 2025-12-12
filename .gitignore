@@ -52,3 +52,9 @@ dist/
 # Keep icon.ico but ignore generated files
 # icon.ico
 
+# Screenshots - keep them
+!screenshots/
+!screenshots/*.png
+!screenshots/*.jpg
+!screenshots/*.jpeg
+
