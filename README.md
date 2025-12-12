@@ -46,13 +46,7 @@ A professional desktop application for discovering network devices, scanning por
 
 <div align="center">
 
-![Main Window](screenshots/main-window.png)
-
-*Main application interface showing device discovery and monitoring*
-
-![Scan Results](screenshots/scan-results.png)
-
-*Detailed vulnerability scan results with security recommendations*
+<img width="1492" height="991" alt="image" src="https://github.com/user-attachments/assets/e2a86b5c-78f3-427d-8e4e-5d29cea91dc3" />
 
 </div>
 
