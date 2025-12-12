@@ -157,8 +157,7 @@ Edit `config.py` to customize:
 ```
 
 ## 📸 Screenshots
-
-*Add screenshots of your application here*
+<img width="1492" height="991" alt="image" src="https://github.com/user-attachments/assets/dacaa7d8-7de4-4e22-acd6-1a605c800b82" />
 
 ## 🤝 Contributing
 
