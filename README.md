@@ -23,7 +23,6 @@ A professional desktop application for discovering network devices, scanning por
 - [Project Structure](#-project-structure)
 - [Configuration](#-configuration)
 - [Building Desktop App](#-building-desktop-app)
-- [Contributing](#-contributing)
 - [Author](#-author)
 - [Disclaimer](#-disclaimer)
 
